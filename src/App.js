@@ -5,7 +5,7 @@ function App() {
   // const [firstDieResult, setFirstDieResult] = useState(1);
   // const [secondDieResult, setSecondDieResult] = useState(6);
   const [diceResult, setDiceResult] = useState(1)
-  const [rolledDice, setRolledDice] = useState([])
+  const [rolledDice, setRolledDice] = useState([1])
   const [numberOfDice, setNumberOfDice] = useState(2)
   const [typeOfDice, setTypeofDice] = useState(6)
   // const firstDieImage = require(`./assets/${firstDieResult}.png`);
@@ -29,7 +29,7 @@ function App() {
       <h1>You rolled:</h1>
       <span className="roll-total-result">{diceResult}</span>
       <div className="roll-individual-results">
-        <h3>With a:</h3>
+        <h3>{rolledDice.length === 1 ? 'with a:' : 'with:'}</h3>
         {rolledDice.map(result => {
           return <span className="singleDice">{result}</span>
         })}
@@ -41,7 +41,10 @@ function App() {
         <div className="numberOfDice">
           <button
             className="dice-amount"
-            onClick={() => setNumberOfDice(numberOfDice - 1)}
+            onClick={() => {
+              if (numberOfDice === 1) return
+              setNumberOfDice(numberOfDice - 1)
+            }}
           >
             -
           </button>
