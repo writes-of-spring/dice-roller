@@ -1,16 +1,5 @@
 @import-normalize;
 
-body {
-  background-color: #282c34;
-  min-height: 100vh;
-  color: white;
-  font-size: 18px;
-}
-
-.App {
-  text-align: center;
-}
-
 .roll-button {
   margin-top: 20px;
   margin-bottom: 20px;
