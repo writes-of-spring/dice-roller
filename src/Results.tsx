@@ -13,8 +13,8 @@ type Props = {
 };
 
 const Results = ({ diceRollResult }: Props) => {
-  const showIndividualDice =
-    diceRollResult?.dicePool && diceRollResult.dicePool.length > 1;
+  const numberOfDice = diceRollResult?.dicePool?.length ?? 0;
+  const showIndividualDice = numberOfDice > 1;
 
   const diceResult =
     diceRollResult?.dicePool?.reduce((acc, dice) => {
@@ -27,7 +27,7 @@ const Results = ({ diceRollResult }: Props) => {
     <>
       <h2 className="text-4xl text-gray-700">Result: {diceResult}</h2>
       <p className="text-2xl text-gray-700">
-        Rolling {diceRollResult.typeOfDice} D{diceRollResult.typeOfDice}
+        Rolling {numberOfDice} D{diceRollResult.typeOfDice}
       </p>
       {showIndividualDice && (
         <p className="text-2xl text-gray-600">
