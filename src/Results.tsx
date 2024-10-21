@@ -12,6 +12,11 @@ type Props = {
   } | null;
 };
 
+const listformatter = new Intl.ListFormat("en", {
+  style: "long",
+  type: "conjunction",
+});
+
 const Results = ({ diceRollResult }: Props) => {
   const showIndividualDice =
     diceRollResult?.dicePool && diceRollResult.dicePool.length > 1;
@@ -21,20 +26,17 @@ const Results = ({ diceRollResult }: Props) => {
       return acc + dice;
     }, 0) ?? null;
 
+  const diceRolls = diceRollResult?.dicePool?.map((d) => d.toString());
   if (!diceRollResult)
     return <h2 className="text-4xl text-gray-700">Your adventure awaits!</h2>;
   return (
     <>
-      <h2 className="text-4xl text-gray-700">Result: {diceResult}</h2>
-      <p className="text-2xl text-gray-700">
-        Rolling {diceRollResult.typeOfDice} D{diceRollResult.typeOfDice}
-      </p>
-      {showIndividualDice && (
-        <p className="text-2xl text-gray-600">
-          Individual dice:{" "}
-          {formatter.format(diceRollResult.dicePool.map((d) => d.toString()))}
-        </p>
-      )}
+      <h2 className="text-4xl text-gray-700">
+        Rolled {diceResult}{" "}
+        {diceRollResult.dicePool.length > 1
+          ? `with ${listformatter.format(diceRolls ?? [])}`
+          : null}
+      </h2>
     </>
   );
 };

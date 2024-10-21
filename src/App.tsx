@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { SubmitHandler } from "react-hook-form";
 import Form, { FormTypes } from "./Form";
 import Results from "./Results";
@@ -9,7 +9,7 @@ function App() {
     dicePool: number[];
   } | null>(null);
 
-  function rollDice(data: FormTypes) {
+  const onFormSubmit: SubmitHandler<FormTypes> = (data) => {
     const { numberOfDice, typeOfDice } = data;
     const rolledDice = Array.from({ length: numberOfDice }, () =>
       Math.floor(Math.random() * typeOfDice + 1)
@@ -18,15 +18,11 @@ function App() {
       typeOfDice,
       dicePool: rolledDice,
     });
-  }
-
-  const onFormSubmit: SubmitHandler<any> = (data) => {
-    rollDice(data);
   };
 
   return (
-    <div className="container mx-auto rounded-xl bg-white p-4 text-gray-700 md:mt-4">
-      <h1 className="text-center text-5xl font-bold text-gray-900  sm:mb-4 lg:mb-8">
+    <div className="container mx-auto max-w-lg rounded-xl bg-white p-4 text-gray-700 md:mt-4">
+      <h1 className="font-boldtext-gray-900 mb-4 text-center text-5xl">
         Pete's Dice Roller
       </h1>
       <div className="flex flex-wrap-reverse gap-4">

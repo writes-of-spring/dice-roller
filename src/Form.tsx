@@ -1,4 +1,3 @@
-import React from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 
 type Props = {
@@ -11,24 +10,12 @@ export type FormTypes = {
 };
 
 const Form = (props: Props) => {
-  const {
-    register,
-    handleSubmit,
-    watch,
-    formState: { errors },
-  } = useForm<FormTypes>({
+  const { register, handleSubmit } = useForm<FormTypes>({
     defaultValues: {
       numberOfDice: 2,
       typeOfDice: 6,
     },
   });
-
-  function rollDice(data: FormTypes) {
-    const { numberOfDice, typeOfDice } = data;
-    const rolledDice = Array.from({ length: numberOfDice }, () =>
-      Math.floor(Math.random() * typeOfDice + 1)
-    );
-  }
 
   return (
     <form onSubmit={handleSubmit(props.onSubmit)}>
