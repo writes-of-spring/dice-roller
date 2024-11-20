@@ -10,8 +10,6 @@ const listformatter = new Intl.ListFormat("en", {
 });
 
 const Results = ({ dicePool }: Props) => {
-  const showIndividualDice = dicePool.length > 1;
-
   const diceResult =
     dicePool?.reduce((acc, dice) => {
       return acc + dice;
