@@ -4,20 +4,14 @@ import Form, { FormTypes } from "./Form";
 import Results from "./Results";
 
 function App() {
-  const [diceRollResult, setDiceRollResult] = useState<{
-    typeOfDice: number;
-    dicePool: number[];
-  } | null>(null);
+  const [dicePool, setDicePool] = useState<number[]>([]);
 
   const onFormSubmit: SubmitHandler<FormTypes> = (data) => {
     const { numberOfDice, typeOfDice } = data;
     const rolledDice = Array.from({ length: numberOfDice }, () =>
       Math.floor(Math.random() * typeOfDice + 1)
     );
-    setDiceRollResult({
-      typeOfDice,
-      dicePool: rolledDice,
-    });
+    setDicePool(rolledDice);
   };
 
   return (
@@ -30,7 +24,7 @@ function App() {
           <Form onSubmit={onFormSubmit} />
         </div>
         <div className="w-72 grow">
-          <Results diceRollResult={diceRollResult} />
+          <Results dicePool={dicePool} />
         </div>
       </div>
     </div>
