@@ -70,7 +70,7 @@ function App() {
     <main className="min-h-screen bg-gray-50 py-8">
       <div className="container mx-auto max-w-2xl px-4">
         <header className="mb-8 text-center">
-          <h1 className="bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-6xl font-extrabold text-transparent">
+          <h1 className="bg-linear-to-r from-indigo-600 to-purple-600 bg-clip-text text-6xl font-extrabold text-transparent">
             Pete's Dice Roller
           </h1>
           <p className="mt-2 text-gray-600">

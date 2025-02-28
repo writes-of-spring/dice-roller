@@ -69,7 +69,7 @@ const Form = ({ onSubmit, disabled }: Props) => {
             required: true,
             valueAsNumber: true,
           })}
-          className="mt-1 block w-full rounded-md border-gray-300 py-2 pl-3 pr-10 text-base text-black focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 disabled:bg-gray-100 disabled:text-gray-500 sm:text-sm"
+          className="mt-1 block w-full rounded-md border-gray-300 py-2 pl-3 pr-10 text-base text-black focus:border-indigo-500 focus:outline-hidden focus:ring-indigo-500 disabled:bg-gray-100 disabled:text-gray-500 sm:text-sm"
           disabled={disabled}
         >
           <option value="4">D4</option>
@@ -95,7 +95,7 @@ const Form = ({ onSubmit, disabled }: Props) => {
             min: 1,
             max: 10,
           })}
-          className="mt-1 block w-full rounded-md border-gray-300 py-2 pl-3 pr-3 text-base text-black focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 disabled:bg-gray-100 disabled:text-gray-500 sm:text-sm"
+          className="mt-1 block w-full rounded-md border-gray-300 py-2 pl-3 pr-3 text-base text-black focus:border-indigo-500 focus:outline-hidden focus:ring-indigo-500 disabled:bg-gray-100 disabled:text-gray-500 sm:text-sm"
           defaultValue={2}
           min={1}
           max={10}
@@ -164,7 +164,7 @@ const Form = ({ onSubmit, disabled }: Props) => {
       <button
         type="submit"
         disabled={disabled || isSubmitting}
-        className="ml-auto block items-center rounded-md border border-transparent bg-indigo-600 px-4 py-2 text-sm font-medium text-white shadow-sm transition-colors hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 disabled:cursor-not-allowed disabled:bg-gray-400"
+        className="ml-auto block items-center rounded-md border border-transparent bg-indigo-600 px-4 py-2 text-sm font-medium text-white shadow-xs transition-colors hover:bg-indigo-700 focus:outline-hidden focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 disabled:cursor-not-allowed disabled:bg-gray-400"
       >
         {isSubmitting || disabled ? <>Rolling...</> : <>Roll</>}
       </button>
