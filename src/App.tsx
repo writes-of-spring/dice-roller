@@ -24,7 +24,7 @@ function App() {
 
     // Simulate a brief delay for rolling animation
     await new Promise((resolve) =>
-      setTimeout(resolve, isShiftPressed ? 3000 : 500)
+      setTimeout(resolve, isShiftPressed ? 3000 : 500),
     );
 
     const { numberOfDice, typeOfDice, rollType } = data;
@@ -37,7 +37,7 @@ function App() {
     ) {
       // Roll 2d20 for advantage/disadvantage
       rolledDice = Array.from({ length: 2 }, () =>
-        Math.floor(Math.random() * 20 + 1)
+        Math.floor(Math.random() * 20 + 1),
       );
 
       // Take highest for advantage, lowest for disadvantage
@@ -48,7 +48,7 @@ function App() {
     } else {
       // Normal roll
       rolledDice = Array.from({ length: numberOfDice }, () =>
-        Math.floor(Math.random() * typeOfDice + 1)
+        Math.floor(Math.random() * typeOfDice + 1),
       );
       finalResult = rolledDice.reduce((a, b) => a + b, 0);
     }
@@ -120,9 +120,9 @@ function App() {
                         numeric: "auto",
                       }).format(
                         Math.round(
-                          (roll.timestamp.getTime() - Date.now()) / 1000 / 60
+                          (roll.timestamp.getTime() - Date.now()) / 1000 / 60,
                         ),
-                        "minute"
+                        "minute",
                       )}
                     </span>
                   </div>

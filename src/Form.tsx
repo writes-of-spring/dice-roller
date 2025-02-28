@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Controller, SubmitHandler, useForm } from "react-hook-form";
+import { Controller, useForm } from "react-hook-form";
 
 type Props = {
   onSubmit: (data: FormTypes, isShiftPressed: boolean) => Promise<void>;
