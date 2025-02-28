@@ -2,7 +2,6 @@ import React from "react";
 
 type Props = {
   dicePool: number[];
-  isRolling: boolean;
   rollType: "normal" | "advantage" | "disadvantage";
 };
 
@@ -11,7 +10,7 @@ const listFormatter = new Intl.ListFormat("en", {
   type: "conjunction",
 });
 
-const Results: React.FC<Props> = ({ dicePool, isRolling, rollType }) => {
+const Results: React.FC<Props> = ({ dicePool, rollType }) => {
   const isD20WithAdvantage =
     dicePool.length === 2 &&
     (rollType === "advantage" || rollType === "disadvantage");
@@ -21,14 +20,6 @@ const Results: React.FC<Props> = ({ dicePool, isRolling, rollType }) => {
       : Math.min(...dicePool)
     : dicePool.reduce((acc, dice) => acc + dice, 0);
   const diceRolls = dicePool.map((d) => d.toString());
-
-  if (isRolling) {
-    return (
-      <div className="text-center" role="status" aria-label="Rolling dice">
-        <h2 className="animate-bounce text-4xl text-gray-700">Rolling...</h2>
-      </div>
-    );
-  }
 
   if (dicePool.length === 0) {
     return (

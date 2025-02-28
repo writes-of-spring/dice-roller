@@ -12,14 +12,12 @@ type DiceRoll = {
 
 function App() {
   const [dicePool, setDicePool] = useState<number[]>([]);
-  const [isRolling, setIsRolling] = useState(false);
   const [rollHistory, setRollHistory] = useState<DiceRoll[]>([]);
   const [currentRollType, setCurrentRollType] = useState<
     "normal" | "advantage" | "disadvantage"
   >("normal");
 
   const onFormSubmit = async (data: FormTypes, isShiftPressed: boolean) => {
-    setIsRolling(true);
     setCurrentRollType(data.rollType);
 
     // Simulate a brief delay for rolling animation
@@ -63,7 +61,6 @@ function App() {
 
     setDicePool(rolledDice);
     setRollHistory((prev) => [newRoll, ...prev].slice(0, 10)); // Keep last 10 rolls
-    setIsRolling(false);
   };
 
   return (
@@ -81,14 +78,10 @@ function App() {
         <div className="rounded-2xl bg-white p-6 shadow-lg">
           <div className="flex flex-col gap-8 md:flex-row-reverse md:items-start">
             <div className="w-full md:w-1/2">
-              <Results
-                dicePool={dicePool}
-                isRolling={isRolling}
-                rollType={currentRollType}
-              />
+              <Results dicePool={dicePool} rollType={currentRollType} />
             </div>
             <div className="w-full md:w-1/2">
-              <Form onSubmit={onFormSubmit} disabled={isRolling} />
+              <Form onSubmit={onFormSubmit} />
             </div>
           </div>
 

@@ -3,7 +3,6 @@ import { Controller, useForm } from "react-hook-form";
 
 type Props = {
   onSubmit: (data: FormTypes, isShiftPressed: boolean) => Promise<void>;
-  disabled?: boolean;
 };
 
 export type FormTypes = {
@@ -12,7 +11,7 @@ export type FormTypes = {
   rollType: "normal" | "advantage" | "disadvantage";
 };
 
-const Form = ({ onSubmit, disabled }: Props) => {
+const Form = ({ onSubmit }: Props) => {
   const [isShiftPressed, setIsShiftPressed] = useState(false);
 
   useEffect(() => {
@@ -70,7 +69,7 @@ const Form = ({ onSubmit, disabled }: Props) => {
             valueAsNumber: true,
           })}
           className="mt-1 block w-full rounded-md border-gray-300 py-2 pl-3 pr-10 text-base text-black focus:border-indigo-500 focus:outline-hidden focus:ring-indigo-500 disabled:bg-gray-100 disabled:text-gray-500 sm:text-sm"
-          disabled={disabled}
+          disabled={isSubmitting}
         >
           <option value="4">D4</option>
           <option value="6">D6</option>
@@ -100,7 +99,7 @@ const Form = ({ onSubmit, disabled }: Props) => {
           min={1}
           max={10}
           type="number"
-          disabled={disabled || showAdvantageOptions}
+          disabled={isSubmitting || showAdvantageOptions}
         />
         {showAdvantageOptions && (
           <p className="mt-1 text-xs text-gray-500">
@@ -122,7 +121,7 @@ const Form = ({ onSubmit, disabled }: Props) => {
                   <button
                     type="button"
                     onClick={() => field.onChange("normal")}
-                    disabled={disabled}
+                    disabled={isSubmitting}
                     className={`rounded-md border px-3 py-2 text-sm ${
                       field.value === "normal"
                         ? "border-indigo-600 bg-indigo-50 text-indigo-600"
@@ -134,7 +133,7 @@ const Form = ({ onSubmit, disabled }: Props) => {
                   <button
                     type="button"
                     onClick={() => field.onChange("advantage")}
-                    disabled={disabled}
+                    disabled={isSubmitting}
                     className={`rounded-md border px-3 py-2 text-sm ${
                       field.value === "advantage"
                         ? "border-indigo-600 bg-indigo-50 text-indigo-600"
@@ -146,7 +145,7 @@ const Form = ({ onSubmit, disabled }: Props) => {
                   <button
                     type="button"
                     onClick={() => field.onChange("disadvantage")}
-                    disabled={disabled}
+                    disabled={isSubmitting}
                     className={`rounded-md border px-3 py-2 text-sm ${
                       field.value === "disadvantage"
                         ? "border-indigo-600 bg-indigo-50 text-indigo-600"
@@ -163,10 +162,10 @@ const Form = ({ onSubmit, disabled }: Props) => {
       )}
       <button
         type="submit"
-        disabled={disabled || isSubmitting}
+        disabled={isSubmitting}
         className="ml-auto block items-center rounded-md border border-transparent bg-indigo-600 px-4 py-2 text-sm font-medium text-white shadow-xs transition-colors hover:bg-indigo-700 focus:outline-hidden focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 disabled:cursor-not-allowed disabled:bg-gray-400"
       >
-        {isSubmitting || disabled ? <>Rolling...</> : <>Roll</>}
+        {isSubmitting ? <>Rolling...</> : <>Roll</>}
       </button>
     </form>
   );
