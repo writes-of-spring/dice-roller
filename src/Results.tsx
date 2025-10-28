@@ -19,7 +19,6 @@ const Results: React.FC<Props> = ({ dicePool, rollType }) => {
       ? Math.max(...dicePool)
       : Math.min(...dicePool)
     : dicePool.reduce((acc, dice) => acc + dice, 0);
-  const diceRolls = dicePool.map((d) => d.toString());
 
   if (dicePool.length === 0) {
     return (
@@ -32,6 +31,9 @@ const Results: React.FC<Props> = ({ dicePool, rollType }) => {
       </h2>
     );
   }
+
+  // Only create string array when we actually have rolls to display
+  const diceRolls = dicePool.map((d) => d.toString());
 
   return (
     <div className="space-y-4" role="status" aria-live="polite">

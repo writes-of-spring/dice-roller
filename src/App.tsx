@@ -10,6 +10,11 @@ type DiceRoll = {
   finalResult?: number;
 };
 
+// Create formatter once to avoid recreation on every render
+const relativeTimeFormatter = new Intl.RelativeTimeFormat("en", {
+  numeric: "auto",
+});
+
 function App() {
   const [dicePool, setDicePool] = useState<number[]>([]);
   const [rollHistory, setRollHistory] = useState<DiceRoll[]>([]);
@@ -35,7 +40,7 @@ function App() {
     ) {
       // Roll 2d20 for advantage/disadvantage
       rolledDice = Array.from({ length: 2 }, () =>
-        Math.floor(Math.random() * 20 + 1),
+        Math.floor(Math.random() * 20) + 1,
       );
 
       // Take highest for advantage, lowest for disadvantage
@@ -46,7 +51,7 @@ function App() {
     } else {
       // Normal roll
       rolledDice = Array.from({ length: numberOfDice }, () =>
-        Math.floor(Math.random() * typeOfDice + 1),
+        Math.floor(Math.random() * typeOfDice) + 1,
       );
       finalResult = rolledDice.reduce((a, b) => a + b, 0);
     }
@@ -109,9 +114,7 @@ function App() {
                       )}
                     </span>
                     <span className="text-gray-500">
-                      {new Intl.RelativeTimeFormat("en", {
-                        numeric: "auto",
-                      }).format(
+                      {relativeTimeFormatter.format(
                         Math.round(
                           (roll.timestamp.getTime() - Date.now()) / 1000 / 60,
                         ),
