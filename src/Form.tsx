@@ -1,8 +1,11 @@
-import React from "react";
-import { SubmitHandler, useForm } from "react-hook-form";
+import { Controller, type SubmitHandler, useForm } from "react-hook-form";
+
+import { Select, SelectItem } from "@/components/ui/select";
+import { Button } from "@/components/ui/button";
+import { NumberField } from "@/components/ui/number-field";
 
 type Props = {
-  onSubmit: SubmitHandler<any>;
+  onSubmit: SubmitHandler<FormTypes>;
 };
 
 export type FormTypes = {
@@ -10,8 +13,13 @@ export type FormTypes = {
   typeOfDice: number;
 };
 
-const Form = (props: Props) => {
-  const { register, handleSubmit } = useForm<FormTypes>({
+const diceOptions = [4, 6, 8, 10, 12, 20].map((sides) => ({
+  id: String(sides),
+  sides,
+}));
+
+const Form = ({ onSubmit }: Props) => {
+  const { handleSubmit, control } = useForm<FormTypes>({
     defaultValues: {
       numberOfDice: 2,
       typeOfDice: 6,
@@ -19,47 +27,61 @@ const Form = (props: Props) => {
   });
 
   return (
-    <form onSubmit={handleSubmit(props.onSubmit)}>
-      <div className="mb-4">
-        <label className="mb-1 block text-sm text-gray-700" htmlFor="numberOfDice">
-          Number Of Dice
-        </label>
-        <input
-          id="numberOfDice"
-          {...register("numberOfDice", {
-            required: true,
-            valueAsNumber: true,
-          })}
-          className="mt-1 block w-full rounded-md border-gray-300 py-2 pr-3 pl-3 text-base focus:border-indigo-500 focus:ring-indigo-500 focus:outline-none sm:text-sm"
-          defaultValue={2}
-          min={1}
-          max={10}
-          type="number"
+    <form className="@container mt-5" onSubmit={handleSubmit(onSubmit)}>
+      <div className="grid gap-3 @sm:grid-cols-[1fr_1fr_auto] @sm:items-end">
+        <Controller
+          control={control}
+          name="numberOfDice"
+          render={({ field }) => (
+            <NumberField
+              className="min-w-0"
+              isRequired
+              isWheelDisabled
+              label="Dice"
+              maxValue={10}
+              minValue={1}
+              name={field.name}
+              step={1}
+              value={field.value}
+              onBlur={field.onBlur}
+              onChange={field.onChange}
+            />
+          )}
         />
-      </div>
-      <div className="mb-4">
-        <span className="mb-1 text-sm text-gray-700">Type of dice</span>
-        <select
-          {...register("typeOfDice", {
-            required: true,
-            valueAsNumber: true,
-          })}
-          className="mt-1 block w-full rounded-md border-gray-300 py-2 pr-10 pl-3 text-base focus:border-indigo-500 focus:ring-indigo-500 focus:outline-none sm:text-sm"
+        <div>
+          <label
+            id="type-of-dice-label"
+            className="text-base/7 font-medium text-zinc-900 sm:text-sm/6"
+          >
+            Sides
+          </label>
+          <div className="mt-2">
+            <Controller
+              control={control}
+              name="typeOfDice"
+              render={({ field }) => (
+                <Select
+                  aria-labelledby="type-of-dice-label"
+                  items={diceOptions}
+                  name={field.name}
+                  value={String(field.value)}
+                  onBlur={field.onBlur}
+                  onChange={(key) => field.onChange(Number(key))}
+                >
+                  {(option) => <SelectItem>D{option.sides}</SelectItem>}
+                </Select>
+              )}
+            />
+          </div>
+        </div>
+        <Button
+          size="lg"
+          type="submit"
+          className="h-12 rounded-lg bg-teal-700 px-3 text-base/6 text-white hover:bg-teal-800 focus-visible:border-teal-700 focus-visible:ring-2 focus-visible:ring-teal-700 sm:h-10 sm:text-sm/5"
         >
-          <option value="4">D4</option>
-          <option value="6">D6</option>
-          <option value="8">D8</option>
-          <option value="10">D10</option>
-          <option value="12">D12</option>
-          <option value="20">D20</option>
-        </select>
+          Roll now
+        </Button>
       </div>
-      <button
-        type="submit"
-        className="ml-auto block items-center rounded-md border border-transparent bg-indigo-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-indigo-700 focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 focus:outline-none"
-      >
-        Roll
-      </button>
     </form>
   );
 };
