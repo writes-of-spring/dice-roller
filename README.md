@@ -1,6 +1,27 @@
 # Dice Rolling App
 
-React app bootstrapped with Create React app to allow for an easy to use dice rolling for when the players outnumber the sets of dice.
+React app for quick dice rolls when the players outnumber the available dice.
+
+## Development
+
+This project uses pnpm. Enable Corepack once if pnpm is not already available:
+
+```sh
+corepack enable
+```
+
+```sh
+pnpm install
+pnpm dev
+```
+
+## Checks
+
+```sh
+pnpm build
+pnpm lint
+pnpm format:check
+```
 
 - [x] Randomise Rolls
 - [x] Reduce Rolls to Total

@@ -11,32 +11,17 @@ export type FormTypes = {
 };
 
 const Form = (props: Props) => {
-  const {
-    register,
-    handleSubmit,
-    watch,
-    formState: { errors },
-  } = useForm<FormTypes>({
+  const { register, handleSubmit } = useForm<FormTypes>({
     defaultValues: {
       numberOfDice: 2,
       typeOfDice: 6,
     },
   });
 
-  function rollDice(data: FormTypes) {
-    const { numberOfDice, typeOfDice } = data;
-    const rolledDice = Array.from({ length: numberOfDice }, () =>
-      Math.floor(Math.random() * typeOfDice + 1)
-    );
-  }
-
   return (
     <form onSubmit={handleSubmit(props.onSubmit)}>
       <div className="mb-4">
-        <label
-          className="mb-1 block text-sm  text-gray-700"
-          htmlFor="numberOfDice"
-        >
+        <label className="mb-1 block text-sm text-gray-700" htmlFor="numberOfDice">
           Number Of Dice
         </label>
         <input
@@ -45,7 +30,7 @@ const Form = (props: Props) => {
             required: true,
             valueAsNumber: true,
           })}
-          className="mt-1 block w-full rounded-md border-gray-300 py-2 pl-3 pr-3 text-base focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 sm:text-sm"
+          className="mt-1 block w-full rounded-md border-gray-300 py-2 pr-3 pl-3 text-base focus:border-indigo-500 focus:ring-indigo-500 focus:outline-none sm:text-sm"
           defaultValue={2}
           min={1}
           max={10}
@@ -59,7 +44,7 @@ const Form = (props: Props) => {
             required: true,
             valueAsNumber: true,
           })}
-          className="mt-1 block w-full rounded-md border-gray-300 py-2 pl-3 pr-10 text-base focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 sm:text-sm"
+          className="mt-1 block w-full rounded-md border-gray-300 py-2 pr-10 pl-3 text-base focus:border-indigo-500 focus:ring-indigo-500 focus:outline-none sm:text-sm"
         >
           <option value="4">D4</option>
           <option value="6">D6</option>
@@ -71,9 +56,9 @@ const Form = (props: Props) => {
       </div>
       <button
         type="submit"
-        className="ml-auto block items-center rounded-md border border-transparent bg-indigo-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+        className="ml-auto block items-center rounded-md border border-transparent bg-indigo-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-indigo-700 focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 focus:outline-none"
       >
-        Post
+        Roll
       </button>
     </form>
   );

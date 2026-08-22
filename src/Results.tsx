@@ -21,8 +21,7 @@ const Results = ({ diceRollResult }: Props) => {
       return acc + dice;
     }, 0) ?? null;
 
-  if (!diceRollResult)
-    return <h2 className="text-4xl text-gray-700">Your adventure awaits!</h2>;
+  if (!diceRollResult) return <h2 className="text-4xl text-gray-700">Your adventure awaits!</h2>;
   return (
     <>
       <h2 className="text-4xl text-gray-700">Result: {diceResult}</h2>
@@ -31,8 +30,7 @@ const Results = ({ diceRollResult }: Props) => {
       </p>
       {showIndividualDice && (
         <p className="text-2xl text-gray-600">
-          Individual dice:{" "}
-          {formatter.format(diceRollResult.dicePool.map((d) => d.toString()))}
+          Individual dice: {formatter.format(diceRollResult.dicePool.map((d) => d.toString()))}
         </p>
       )}
     </>
