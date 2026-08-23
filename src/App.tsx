@@ -1,134 +1,68 @@
-import { useState } from "react";
+import React, { useState } from "react";
+import { type SubmitHandler } from "react-hook-form";
 import Form, { FormTypes } from "./Form";
-import Results from "./Results";
-
-type DiceRoll = {
-  id: string;
-  rolls: number[];
-  timestamp: Date;
-  rollType?: "normal" | "advantage" | "disadvantage";
-  finalResult?: number;
-};
-
-// Create formatter once to avoid recreation on every render
-const relativeTimeFormatter = new Intl.RelativeTimeFormat("en", {
-  numeric: "auto",
-});
+import Results, { type DiceRollResult } from "./Results";
 
 function App() {
-  const [dicePool, setDicePool] = useState<number[]>([]);
-  const [rollHistory, setRollHistory] = useState<DiceRoll[]>([]);
-  const [currentRollType, setCurrentRollType] = useState<
-    "normal" | "advantage" | "disadvantage"
-  >("normal");
+  const [diceRollResult, setDiceRollResult] = useState<DiceRollResult | null>(null);
 
-  const onFormSubmit = async (data: FormTypes, isShiftPressed: boolean) => {
-    setCurrentRollType(data.rollType);
+  function rollDice(data: FormTypes) {
+    const { numberOfDice, typeOfDice, rollMode } = data;
 
-    // Simulate a brief delay for rolling animation
-    await new Promise((resolve) =>
-      setTimeout(resolve, isShiftPressed ? 3000 : 500),
-    );
-
-    const { numberOfDice, typeOfDice, rollType } = data;
-    let rolledDice: number[];
-    let finalResult: number;
-
-    if (
-      typeOfDice === 20 &&
-      (rollType === "advantage" || rollType === "disadvantage")
-    ) {
-      // Roll 2d20 for advantage/disadvantage
-      rolledDice = Array.from({ length: 2 }, () =>
-        Math.floor(Math.random() * 20) + 1,
-      );
-
-      // Take highest for advantage, lowest for disadvantage
-      finalResult =
-        rollType === "advantage"
-          ? Math.max(...rolledDice)
-          : Math.min(...rolledDice);
-    } else {
-      // Normal roll
-      rolledDice = Array.from({ length: numberOfDice }, () =>
-        Math.floor(Math.random() * typeOfDice) + 1,
-      );
-      finalResult = rolledDice.reduce((a, b) => a + b, 0);
+    if (typeOfDice === 100) {
+      setDiceRollResult({
+        typeOfDice,
+        rollMode: "normal",
+        dicePool: [Math.floor(Math.random() * 10), Math.floor(Math.random() * 10)],
+      });
+      return;
     }
 
-    const newRoll: DiceRoll = {
-      id: crypto.randomUUID(),
-      rolls: rolledDice,
-      timestamp: new Date(),
-      rollType: typeOfDice === 20 ? rollType : undefined,
-      finalResult,
-    };
+    const diceToRoll = typeOfDice === 20 && rollMode !== "normal" ? 2 : numberOfDice;
+    const rolledDice = Array.from({ length: diceToRoll }, () =>
+      Math.floor(Math.random() * typeOfDice + 1),
+    );
+    setDiceRollResult({
+      typeOfDice,
+      rollMode,
+      dicePool: rolledDice,
+    });
+  }
 
-    setDicePool(rolledDice);
-    setRollHistory((prev) => [newRoll, ...prev].slice(0, 10)); // Keep last 10 rolls
+  const onFormSubmit: SubmitHandler<FormTypes> = (data) => {
+    rollDice(data);
   };
 
   return (
-    <main className="min-h-screen bg-gray-50 py-8">
-      <div className="container mx-auto max-w-2xl px-4">
-        <header className="mb-8 text-center">
-          <h1 className="bg-linear-to-r from-indigo-600 to-purple-600 bg-clip-text text-6xl font-extrabold text-transparent">
+    <div className="isolate min-h-dvh bg-white text-zinc-700 antialiased dark:bg-zinc-950 dark:text-zinc-300">
+      <main className="mx-auto max-w-6xl px-4 py-8 sm:px-6 sm:py-10">
+        <header>
+          <h1 className="max-w-[20ch] text-4xl font-semibold tracking-tight text-balance text-zinc-950 sm:text-5xl dark:text-zinc-100">
             Pete's Dice Roller
           </h1>
-          <p className="mt-2 text-gray-600">
-            Roll with advantage! Hold Shift for suspense...
+          <p className="mt-3 max-w-[48ch] text-base/7 text-pretty text-zinc-600 sm:text-sm/6 dark:text-zinc-400">
+            Choose your dice and leave the rest to chance.
           </p>
         </header>
-
-        <div className="rounded-2xl bg-white p-6 shadow-lg">
-          <div className="flex flex-col gap-8 md:flex-row-reverse md:items-start">
-            <div className="w-full md:w-1/2">
-              <Results dicePool={dicePool} rollType={currentRollType} />
-            </div>
-            <div className="w-full md:w-1/2">
-              <Form onSubmit={onFormSubmit} />
-            </div>
-          </div>
-
-          {rollHistory.length > 0 && (
-            <div className="mt-8 border-t pt-6">
-              <h2 className="mb-4 text-xl font-semibold text-gray-700">
-                Recent Rolls
+        <div className="mt-8 grid gap-8 border-y border-zinc-950/10 py-5 lg:grid-cols-[21fr_19fr] dark:border-white/10">
+          <section aria-labelledby="quick-roll-heading">
+            <div>
+              <h2
+                id="quick-roll-heading"
+                className="text-2xl font-semibold tracking-tight text-balance text-zinc-950 sm:text-xl dark:text-zinc-100"
+              >
+                Roll the dice
               </h2>
-              <div className="space-y-2">
-                {rollHistory.map((roll) => (
-                  <div
-                    key={roll.id}
-                    className="flex items-center justify-between rounded-lg bg-gray-50 px-4 py-2 text-sm"
-                  >
-                    <span>
-                      {roll.rollType ? (
-                        <>
-                          Rolled {roll.finalResult} with {roll.rollType} (
-                          {roll.rolls.join(", ")})
-                        </>
-                      ) : (
-                        <>
-                          Rolled {roll.finalResult} ({roll.rolls.join(", ")})
-                        </>
-                      )}
-                    </span>
-                    <span className="text-gray-500">
-                      {relativeTimeFormatter.format(
-                        Math.round(
-                          (roll.timestamp.getTime() - Date.now()) / 1000 / 60,
-                        ),
-                        "minute",
-                      )}
-                    </span>
-                  </div>
-                ))}
-              </div>
+              <p className="mt-1 max-w-[48ch] text-base/7 text-pretty text-zinc-600 sm:text-sm/6 dark:text-zinc-400">
+                Select a quantity and die type.
+              </p>
             </div>
-          )}
+            <Form onSubmit={onFormSubmit} />
+          </section>
+          <Results diceRollResult={diceRollResult} />
         </div>
-      </div>
-    </main>
+      </main>
+    </div>
   );
 }
 
