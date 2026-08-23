@@ -96,7 +96,7 @@ function SelectTrigger({
       data-slot="select-trigger"
       data-size={size}
       className={cn(
-        "flex h-12 w-full items-center justify-between gap-1.5 rounded-lg bg-zinc-950/5 px-3 text-base text-zinc-950 whitespace-nowrap ring-1 ring-zinc-950/10 transition-colors outline-none select-none hover:bg-zinc-950/10 focus-visible:ring-2 focus-visible:ring-teal-700 disabled:cursor-not-allowed disabled:opacity-50 aria-expanded:ring-2 aria-expanded:ring-teal-700 aria-invalid:ring-2 aria-invalid:ring-destructive data-placeholder:text-zinc-500 sm:h-10 sm:text-sm [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
+        "flex h-12 w-full items-center justify-between gap-1.5 rounded-lg bg-zinc-950/5 px-3 text-base text-zinc-950 whitespace-nowrap ring-1 ring-zinc-950/10 transition-colors outline-none select-none hover:bg-zinc-950/10 focus-visible:ring-2 focus-visible:ring-teal-700 disabled:cursor-not-allowed disabled:opacity-50 aria-expanded:ring-2 aria-expanded:ring-teal-700 aria-invalid:ring-2 aria-invalid:ring-destructive data-placeholder:text-zinc-500 sm:h-10 sm:text-sm dark:bg-zinc-900 dark:text-zinc-100 dark:ring-white/10 dark:hover:bg-zinc-800 dark:focus-visible:ring-teal-400 dark:aria-expanded:ring-teal-400 dark:data-placeholder:text-zinc-500 dark:shadow-none [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
         className,
       )}
       {...props}
@@ -150,7 +150,7 @@ function SelectPopover({
       offset={offset}
       crossOffset={crossOffset}
       className={cn(
-        "relative isolate z-50 w-(--trigger-width) min-w-36 origin-(--trigger-anchor-point) overflow-hidden rounded-xl bg-popover p-1 text-popover-foreground shadow-lg ring-1 ring-zinc-950/10 duration-100 data-entering:animate-in data-entering:fade-in-0 data-entering:zoom-in-95 data-exiting:animate-out data-exiting:fade-out-0 data-exiting:zoom-out-95 data-[placement=bottom]:slide-in-from-top-2 data-[placement=left]:slide-in-from-right-2 data-[placement=right]:slide-in-from-left-2 data-[placement=top]:slide-in-from-bottom-2 **:data-[slot$=-item]:data-focused:bg-zinc-950/10",
+        "relative isolate z-50 w-(--trigger-width) min-w-36 origin-(--trigger-anchor-point) overflow-hidden rounded-xl bg-popover p-1 text-popover-foreground shadow-lg ring-1 ring-zinc-950/10 duration-100 data-entering:animate-in data-entering:fade-in-0 data-entering:zoom-in-95 data-exiting:animate-out data-exiting:fade-out-0 data-exiting:zoom-out-95 data-[placement=bottom]:slide-in-from-top-2 data-[placement=left]:slide-in-from-right-2 data-[placement=right]:slide-in-from-left-2 data-[placement=top]:slide-in-from-bottom-2 dark:bg-zinc-900 dark:ring-white/10 dark:shadow-none **:data-[slot$=-item]:data-focused:bg-zinc-950/10",
         className,
       )}
       {...props}
@@ -214,7 +214,7 @@ function SelectItem({
       data-slot="select-item"
       textValue={typeof children === "string" ? children : undefined}
       className={cn(
-        "relative flex w-full cursor-default items-center gap-1.5 rounded-lg px-3 py-2 text-base outline-hidden select-none data-focused:bg-zinc-950/10 data-disabled:pointer-events-none data-disabled:opacity-50 sm:text-sm [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4 *:[span]:last:flex *:[span]:last:items-center *:[span]:last:gap-2",
+        "relative flex w-full cursor-default items-center gap-1.5 rounded-lg px-3 py-2 text-base outline-hidden select-none data-focused:bg-zinc-950/10 data-disabled:pointer-events-none data-disabled:opacity-50 sm:text-sm dark:data-focused:bg-white/10 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4 *:[span]:last:flex *:[span]:last:items-center *:[span]:last:gap-2",
         className,
       )}
       {...props}
