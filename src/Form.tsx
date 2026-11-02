@@ -1,25 +1,20 @@
+import { useMemo } from "react";
+import { NumberParser } from "@internationalized/number";
+import { useLocale } from "react-aria-components";
 import { Controller, type SubmitHandler, useForm, useWatch } from "react-hook-form";
 
 import { Select, SelectItem } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
 import { NumberField } from "@/components/ui/number-field";
+import { diceSides, type RollMode, type RollSettings } from "./lib/dice";
 
 type Props = {
   onSubmit: SubmitHandler<FormTypes>;
 };
 
-export type FormTypes = {
-  numberOfDice: number;
-  typeOfDice: number;
-  rollMode: RollMode;
-};
+export type FormTypes = RollSettings;
 
-export type RollMode = "normal" | "advantage" | "disadvantage";
-
-const diceOptions = [4, 6, 8, 10, 12, 20, 100].map((sides) => ({
-  id: String(sides),
-  sides,
-}));
+const diceOptions = diceSides.map((sides) => ({ id: String(sides), sides }));
 
 const rollModes: Array<{ id: RollMode; label: string }> = [
   { id: "normal", label: "Normal" },
@@ -28,11 +23,19 @@ const rollModes: Array<{ id: RollMode; label: string }> = [
 ];
 
 const Form = ({ onSubmit }: Props) => {
-  const { handleSubmit, control, setValue } = useForm<FormTypes>({
+  const { locale } = useLocale();
+  const numberParser = useMemo(() => new NumberParser(locale), [locale]);
+  const {
+    handleSubmit,
+    control,
+    setValue,
+    formState: { errors },
+  } = useForm<FormTypes>({
     defaultValues: {
       numberOfDice: 2,
       typeOfDice: 6,
       rollMode: "normal",
+      modifier: 0,
     },
   });
 
@@ -50,25 +53,47 @@ const Form = ({ onSubmit }: Props) => {
         : "Roll now";
 
   return (
-    <form className="@container mt-5" onSubmit={handleSubmit(onSubmit)}>
-      <div className="grid gap-3 @sm:grid-cols-[1fr_1fr_auto] @sm:items-end">
+    <form
+      className="@container mt-8"
+      onSubmit={handleSubmit((data, event) =>
+        onSubmit({ ...data, numberOfDice: isSingleCheck ? 1 : data.numberOfDice }, event),
+      )}
+    >
+      <div className="grid gap-4 @sm:grid-cols-3 @sm:items-end">
         <Controller
           control={control}
           name="numberOfDice"
+          rules={{
+            validate: (value) =>
+              isSingleCheck ||
+              (Number.isInteger(value) && value >= 1 && value <= 10) ||
+              "Choose between 1 and 10 whole dice.",
+          }}
           render={({ field }) => (
             <NumberField
               className="min-w-0"
+              isInvalid={!!errors.numberOfDice}
+              aria-describedby={errors.numberOfDice ? "roll-errors" : undefined}
               isRequired
               isWheelDisabled
               label="Dice"
+              commitBehavior="validate"
               maxValue={10}
               minValue={1}
               name={field.name}
               step={1}
               value={isSingleCheck ? 1 : field.value}
               isDisabled={isSingleCheck}
-              onBlur={field.onBlur}
-              onChange={field.onChange}
+              onBlur={(event) => {
+                const value = numberParser.parse(
+                  event.target instanceof HTMLInputElement ? event.target.value : "",
+                );
+                if (!Number.isInteger(value) || value < 1 || value > 10) field.onChange(1);
+                field.onBlur();
+              }}
+              onChange={(value) =>
+                field.onChange(Number.isInteger(value) && value >= 1 && value <= 10 ? value : 1)
+              }
             />
           )}
         />
@@ -93,9 +118,6 @@ const Form = ({ onSubmit }: Props) => {
                   onChange={(key) => {
                     const nextType = Number(key);
                     field.onChange(nextType);
-                    if (nextType === 100) {
-                      setValue("numberOfDice", 1);
-                    }
                     if (nextType !== 20) {
                       setValue("rollMode", "normal");
                     }
@@ -109,14 +131,53 @@ const Form = ({ onSubmit }: Props) => {
             />
           </div>
         </div>
+        <Controller
+          control={control}
+          name="modifier"
+          rules={{
+            validate: (value) =>
+              (Number.isInteger(value) && Math.abs(value) <= 1000) ||
+              "Enter a whole modifier between -1000 and 1000.",
+          }}
+          render={({ field }) => (
+            <NumberField
+              label="Modifier"
+              isRequired
+              isWheelDisabled
+              commitBehavior="validate"
+              minValue={-1000}
+              maxValue={1000}
+              step={1}
+              name={field.name}
+              value={field.value}
+              onBlur={(event) => {
+                const value = numberParser.parse(
+                  event.target instanceof HTMLInputElement ? event.target.value : "",
+                );
+                if (!Number.isInteger(value) || Math.abs(value) > 1000) field.onChange(0);
+                field.onBlur();
+              }}
+              onChange={(value) =>
+                field.onChange(Number.isInteger(value) && Math.abs(value) <= 1000 ? value : 0)
+              }
+              isInvalid={!!errors.modifier}
+              aria-describedby={errors.modifier ? "roll-errors" : undefined}
+            />
+          )}
+        />
         <Button
           size="lg"
           type="submit"
-          className="h-12 rounded-lg bg-teal-700 px-3 text-base/6 text-white hover:bg-teal-800 focus-visible:border-teal-700 focus-visible:ring-2 focus-visible:ring-teal-700 sm:h-10 sm:text-sm/5 dark:bg-teal-600 dark:shadow-none dark:hover:bg-teal-500 dark:focus-visible:border-teal-400 dark:focus-visible:ring-teal-400"
+          className="mt-2 h-12 rounded-lg bg-teal-800 px-3 text-base/6 text-white hover:bg-teal-900 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal-700 sm:h-10 sm:text-sm/5 @sm:col-span-3 dark:bg-teal-700 dark:shadow-none dark:hover:bg-teal-600"
         >
           {submitLabel}
         </Button>
       </div>
+      {errors.numberOfDice || errors.modifier ? (
+        <p id="roll-errors" role="alert" className="mt-2 text-sm text-red-700 dark:text-red-400">
+          {errors.numberOfDice?.message || errors.modifier?.message}
+        </p>
+      ) : null}
       {isSingleCheck ? (
         <p className="mt-2 text-base/7 text-zinc-600 sm:text-sm/6 dark:text-zinc-400">
           {isPercentileRoll
@@ -150,9 +211,6 @@ const Form = ({ onSubmit }: Props) => {
                       }
                       onPress={() => {
                         field.onChange(mode.id);
-                        if (mode.id !== "normal") {
-                          setValue("numberOfDice", 1);
-                        }
                       }}
                     >
                       {mode.label}

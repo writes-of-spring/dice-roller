@@ -1,85 +1,63 @@
-import type { RollMode } from "./Form";
+import { Dices } from "lucide-react";
+import { formatRoll, type DiceRollResult } from "./lib/dice";
 
-export type DiceRollResult = {
-  typeOfDice: number;
-  dicePool: number[];
-  rollMode: RollMode;
-};
-
-type Props = {
-  diceRollResult: DiceRollResult | null;
-};
+type Props = { diceRollResult: DiceRollResult | null };
 
 const Results = ({ diceRollResult }: Props) => {
   if (!diceRollResult) {
     return (
-      <section aria-labelledby="results-heading" className="@container">
-        <p className="text-base/7 font-medium text-zinc-900 sm:text-sm/6 dark:text-zinc-100">
-          Latest roll
-        </p>
-        <h2
-          id="results-heading"
-          className="mt-1 max-w-[20ch] text-2xl font-semibold tracking-tight text-balance text-zinc-950 sm:text-xl dark:text-zinc-100"
-        >
-          No rolls yet
-        </h2>
-        <p className="mt-2 max-w-[56ch] text-base/7 text-pretty text-zinc-600 sm:text-sm/6 dark:text-zinc-400">
-          Your total and individual results will appear here.
-        </p>
+      <section aria-labelledby="results-heading" className="flex min-h-64 flex-col">
+        <div className="flex flex-1 flex-col items-center justify-center py-8 text-center">
+          <Dices
+            aria-hidden="true"
+            className="size-12 stroke-teal-700/40 dark:stroke-teal-400/40"
+          />
+          <h2
+            id="results-heading"
+            className="mt-5 text-xl font-semibold text-zinc-900 dark:text-zinc-100"
+          >
+            Ready when you are
+          </h2>
+          <p className="mt-2 max-w-[30ch] text-base/7 text-zinc-600 sm:text-sm/6 dark:text-zinc-400">
+            Your roll and its details will appear here.
+          </p>
+        </div>
       </section>
     );
   }
 
-  const { dicePool, typeOfDice, rollMode } = diceRollResult;
+  const { dicePool, typeOfDice, keptDieIndex, total, subtotal, modifier } = diceRollResult;
   const isPercentileRoll = typeOfDice === 100;
-  const isD20SpecialRoll = typeOfDice === 20 && rollMode !== "normal";
-  const diceCount = dicePool.length;
-  const keptDieIndex = isD20SpecialRoll
-    ? rollMode === "advantage"
-      ? dicePool[0] >= dicePool[1]
-        ? 0
-        : 1
-      : dicePool[0] <= dicePool[1]
-        ? 0
-        : 1
-    : null;
-  const percentileTotal = dicePool[0] * 10 + dicePool[1];
-  const total = isPercentileRoll
-    ? percentileTotal || 100
-    : keptDieIndex === null
-      ? dicePool.reduce((sum, die) => sum + die, 0)
-      : dicePool[keptDieIndex];
-  const rollLabel = isPercentileRoll
-    ? "d100"
-    : isD20SpecialRoll
-      ? `d20 · ${rollMode === "advantage" ? "Advantage" : "Disadvantage"}`
-      : `${diceCount}d${typeOfDice}`;
+  const rollLabel = formatRoll(diceRollResult);
 
   return (
-    <section aria-labelledby="results-heading" aria-live="polite" className="@container">
-      <div className="flex flex-col gap-5 @sm:flex-row @sm:items-end @sm:justify-between">
+    <section aria-labelledby="results-heading" aria-live="polite">
+      <div className="flex items-end justify-between gap-4 border-b border-zinc-950/10 pb-6 dark:border-white/10">
         <div className="min-w-0">
-          <p className="text-base/7 font-medium text-zinc-900 sm:text-sm/6 dark:text-zinc-100">
+          <p className="text-base font-medium text-zinc-600 sm:text-sm dark:text-zinc-400">
             Latest roll
           </p>
           <h2
             id="results-heading"
-            className="mt-1 text-2xl font-semibold tracking-tight text-balance text-zinc-950 sm:text-xl dark:text-zinc-100"
+            className="mt-1 text-xl font-semibold text-zinc-900 dark:text-zinc-100"
           >
             {rollLabel}
           </h2>
+          {modifier !== 0 ? (
+            <p className="mt-2 text-base text-zinc-600 sm:text-sm dark:text-zinc-400">
+              Dice {subtotal} {modifier > 0 ? "+" : "−"} modifier {Math.abs(modifier)}
+            </p>
+          ) : null}
         </div>
-        <dl className="shrink-0">
-          <dt className="text-base/7 font-medium text-zinc-900 sm:text-sm/6 dark:text-zinc-100">
-            Total
-          </dt>
-          <dd className="mt-1 text-4xl font-semibold tracking-tight text-teal-700 tabular-nums sm:text-3xl dark:text-teal-400">
+        <div className="shrink-0 text-right">
+          <p className="text-base text-zinc-600 sm:text-sm dark:text-zinc-400">Total</p>
+          <p className="text-5xl font-semibold tracking-tight text-teal-700 tabular-nums dark:text-teal-400">
             {total}
-          </dd>
-        </dl>
+          </p>
+        </div>
       </div>
-      <div className="mt-5 border-t border-zinc-950/10 pt-5 dark:border-white/10">
-        <p className="text-base/7 font-medium text-zinc-900 sm:text-sm/6 dark:text-zinc-100">
+      <div className="mt-5">
+        <p className="text-base font-medium text-zinc-700 sm:text-sm dark:text-zinc-300">
           {isPercentileRoll ? "Percentile dice" : "Individual dice"}
         </p>
         <ol
@@ -88,7 +66,7 @@ const Results = ({ diceRollResult }: Props) => {
               ? "Tens and units results for d100"
               : `Individual results for ${rollLabel}`
           }
-          className="mt-3 grid grid-cols-[repeat(auto-fit,minmax(3.5rem,1fr))] gap-2"
+          className="mt-3 flex flex-wrap gap-2"
           role="list"
         >
           {dicePool.map((die, index) => {
@@ -96,25 +74,18 @@ const Results = ({ diceRollResult }: Props) => {
             const isDiscarded = keptDieIndex !== null && !isKept;
             const dieLabel = isPercentileRoll ? (index === 0 ? "Tens" : "Units") : null;
             const dieValue = isPercentileRoll && index === 0 ? die * 10 : die;
-
             return (
               <li
                 key={`${index}-${die}`}
-                className={`rounded-lg px-3 py-2 text-center text-zinc-950 tabular-nums dark:text-zinc-100 dark:shadow-none ${
-                  isKept
-                    ? "bg-teal-700/10 inset-ring inset-ring-teal-700/20 dark:bg-teal-400/10 dark:inset-ring-teal-400/20"
-                    : "bg-zinc-950/5 dark:bg-zinc-900 dark:inset-ring dark:inset-ring-white/5"
-                } ${isDiscarded ? "text-zinc-500 dark:text-zinc-500" : ""}`}
+                className={`min-w-14 rounded-lg px-3 py-2 text-center tabular-nums ring-1 ${isKept ? "bg-teal-700 text-white ring-teal-700 dark:bg-teal-900 dark:ring-teal-800" : "bg-white text-zinc-900 ring-zinc-950/10 dark:bg-zinc-800 dark:text-zinc-100 dark:ring-white/10"} ${isDiscarded ? "opacity-50" : ""}`}
               >
                 {dieLabel || keptDieIndex !== null ? (
-                  <span className="block text-xs/5 font-medium tracking-wide text-zinc-600 no-underline dark:text-zinc-400">
+                  <span className="block text-xs">
                     {dieLabel || (isKept ? "Kept" : "Discarded")}
                   </span>
                 ) : null}
                 <span
-                  className={`block text-2xl/8 font-medium sm:text-xl/7 ${
-                    isDiscarded ? "line-through" : ""
-                  }`}
+                  className={`block text-xl font-semibold ${isDiscarded ? "line-through" : ""}`}
                 >
                   {isPercentileRoll && index === 0 ? String(dieValue).padStart(2, "0") : dieValue}
                 </span>

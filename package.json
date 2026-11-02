@@ -5,6 +5,8 @@
   "type": "module",
   "scripts": {
     "build": "tsc && vite build",
+    "test": "vitest run",
+    "test:watch": "vitest",
     "dev": "vite",
     "format": "oxfmt",
     "format:check": "oxfmt --check",
@@ -14,6 +16,7 @@
   },
   "dependencies": {
     "@fontsource-variable/geist": "^5.3.0",
+    "@internationalized/number": "^3.6.9",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "lucide-react": "^1.33.0",
@@ -34,11 +37,22 @@
     "oxlint": "^1.79.0",
     "tailwindcss": "^4.3.3",
     "typescript": "^7.0.2",
-    "vite": "^8.2.2"
+    "vite": "^8.2.2",
+    "vitest": "^5.0.0"
+  },
+  "devEngines": {
+    "packageManager": {
+      "name": "pnpm",
+      "version": "^12.16.1",
+      "onFail": "download"
+    },
+    "runtime": {
+      "name": "node",
+      "version": "^22.12.0",
+      "onFail": "download"
+    }
   },
   "engines": {
-    "node": "^20.19.0 || >=22.12.0",
-    "pnpm": ">=11.0.0"
-  },
-  "packageManager": "pnpm@11.21.0"
+    "node": "^20.19.0 || >=22.12.0"
+  }
 }
